@@ -2,7 +2,15 @@
 
 A light-weight python library to run CRUD operations on Graph Databases, using JSON inputs.
 
+**Note** Under Active Development. 
 
+```python
+from graph_crud.manager import CrudManager
+
+manager = CrudManager("ws://127.0.0.1:8182/gremlin")
+msg = {...}
+manager.process(msg)
+```
 ### Add Vertex
 
 ```json
@@ -18,6 +26,8 @@ A light-weight python library to run CRUD operations on Graph Databases, using J
     }
   }
 }
+manager.process(msg)
+
 ```
 
 ### Add Edge
