@@ -49,7 +49,6 @@ manager.process(msg)
       "first_discovered": 1989
     }    
   }
-  
-
+ 
 }
 ```

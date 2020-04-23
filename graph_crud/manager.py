@@ -14,19 +14,18 @@ class CrudManager:
         if gremlin_server_url is None:
             raise Exception("Invalid gremlin_server_url. example: ws://127.0.0.1:8182/gremlin")
         self.g = traversal().withRemote(DriverRemoteConnection(gremlin_server_url, 'g'))
-        self.vertex = Vertex(self.g)
-        # self.edge = Edge(self.g)
+        self.vertex = Vertex(self)
+        self.edge = Edge(self)
 
     @staticmethod
-    def get_type(msg):
-        _type = msg.get("type")
+    def get_type(_type):
         if _type and _type.lower() not in ["vertex", "edge"]:
             raise InvalidPayloadException()
         return _type
 
-    def process(self, msg):
-        _type = self.get_type(msg)
+    def process(self, type=None, operation_type=None, payload=None):
+        _type = self.get_type(type)
         if _type == "vertex":
-            return self.vertex.process(msg)
+            return self.vertex.process(operation_type, **payload)
         elif _type == "edge":
-            return self.edge.process(msg)
+            return self.edge.process(operation_type, **payload)

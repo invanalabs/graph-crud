@@ -4,10 +4,10 @@ import abc
 
 class OperationsBase(metaclass=abc.ABCMeta):
 
-    def __init__(self, g):
-        if g is None:
+    def __init__(self, manager):
+        if manager is None:
             raise InvalidConnection()
-        self.g = g
+        self.manager = manager
 
     @staticmethod
     def _serialize_vertex_data(vtx):
@@ -51,6 +51,10 @@ class OperationsBase(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def validate_data(self, data):
+        pass
+
+    @abc.abstractmethod
+    def get_or_create(self, label=None, data=None):
         pass
 
     def process(self, operation_type=None, **kwargs):

@@ -2,61 +2,6 @@ import pytest
 
 
 class TestVertex:
-    label = "Plant"
-    example_data = {
-        "common_name": "chrysanths",
-        "scientific_name": "Chrysanthemum"
-    }
-    DATA_CREATE_QUERY = {
-        "type": "vertex",
-        "operation_type": "create",
-        "data": {
-            "label": "Plant",
-            "properties": {
-                "common_name": "chrysanths",
-                "scientific_name": "Chrysanthemum"
-            }
-        }
-    }
-
-    UPDATE_QUERY = {
-        "type": "vertex",
-        "operation_type": "update",
-        "data": {
-            "label": "Plant",
-            "properties": {
-                "scientific_name": "Chrysanthemum changed"
-            }
-        },
-        "query": {
-            "scientific_name": "Chrysanthemum"
-        }
-    }
-
-    READ_ONE_QUERY = {
-        "type": "vertex",
-        "operation_type": "read_one",
-        "query": {
-            "label": "Plant",  # optional not needed
-            "scientific_name": "Chrysanthemum"
-        }
-    }
-    READ_MANY_QUERY = {
-        "type": "vertex",
-        "operation_type": "read_many",
-        "query": {
-            "label": "Plant",  # optional not needed
-            "scientific_name": "Chrysanthemum"
-        }
-    }
-    DELETE_QUERY = {
-        "type": "vertex",
-        "operation_type": "delete",
-        "query": {
-            "label": "Plant",  # optional not needed
-            # "scientific_name": "Chrysanthemum"
-        }
-    }
 
     @pytest.fixture
     def graph_manager(self):
@@ -102,7 +47,6 @@ class TestVertex:
         )
 
     def test_read_vertex(self, graph_manager):
-        msg = self.READ_MANY_QUERY
         vtx = graph_manager.process(
             type="vertex",
             operation_type="read_many",
@@ -112,7 +56,6 @@ class TestVertex:
         )
 
     def test_delete_vertex(self, graph_manager):
-        msg = self.DELETE_QUERY
         graph_manager.process(
             type="vertex",
             operation_type="delete",

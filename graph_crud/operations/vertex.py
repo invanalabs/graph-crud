@@ -34,17 +34,20 @@ class Vertex(OperationsBase):
 
     def create(self, label=None, data=None):
         logger.debug("Creating vertex with label {label} and data {data}".format(label=label, data=data))
-        _ = self.g.addV(label)
+
+        if data is None:
+            raise Exception("Vertex cannot be created with data")
+        _ = self.manager.g.addV(label)
         for k, v in data.items():
             _.property(k, v)
         _vtx = _.valueMap(True).next()
         return self._serialize_vertex_data(_vtx)
 
-    def get_or_create(self, label=None, data=None):
-        vtx = self.read_one(label=label, data=data)
+    def get_or_create(self, label=None, query=None):
+        vtx = self.read_one(label=label, **query)
         if vtx is None:
-            return self.create(label=label, data=data)
-        return None
+            return self.create(label=label, data=query)
+        return vtx
 
     def update(self, id=None, label=None, query=None, data=None):
         logger.debug("Updating vertex with label:id:query {label}:{id}:{query}".format(
@@ -52,7 +55,7 @@ class Vertex(OperationsBase):
         vtx = self.read_one(id=id, label=label, query=query)
         data = {} if data is None else data
         if vtx is not None:
-            _ = self.g.V(id)
+            _ = self.manager.g.V(id)
             for k, v in data.items():
                 _.property(k, v)
             _vtx = _.valueMap(True).next()
@@ -66,7 +69,7 @@ class Vertex(OperationsBase):
         :param id:
         :return:
         """
-        _ = self.g.V(id) if id else self.g.V()
+        _ = self.manager.g.V(id) if id else self.manager.g.V()
         if label:
             _.hasLabel(label)
         for k, v in kwargs.items():
@@ -81,6 +84,7 @@ class Vertex(OperationsBase):
             if _:
                 return self._serialize_vertex_data(_)
         except Exception as e:
+            # print(e)
             pass
         return None
 
