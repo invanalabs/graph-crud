@@ -17,7 +17,7 @@ manager.process(msg)
 {
   "type": "vertex",
   "operation_type": "create",
-  "payload": {
+  "data": {
     "label": "Plant",
     "properties":{
       "common_name": "chrysanths",
@@ -35,7 +35,7 @@ manager.process(msg)
 {
   "type": "Edge",
   "operation_type": "create",
-  "payload": {
+  "data": {
     "label": "BelongsTo",
     "inV": {
       "query":  {
