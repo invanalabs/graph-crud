@@ -43,6 +43,16 @@ class Vertex(OperationsBase):
 
     def update(self, query_data):
         logger.debug("Updating vertex with query_data {query_data}".format(query_data=query_data))
+        data = query_data.get("data")
+        vtx = self.read_one(query_data)
+        print("vtx========", vtx)
+        if vtx:
+            _ = self.g.V(vtx['id'])
+            for k, v in data['properties'].items():
+                _.property(k, v)
+            _vtx = _.valueMap(True).next()
+            return self._serialize_vertex_data(_vtx)
+        return None
 
     def filter(self, query):
         """

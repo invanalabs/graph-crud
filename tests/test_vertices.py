@@ -20,8 +20,7 @@ class TestVertex:
         "data": {
             "label": "Plant",
             "properties": {
-                "common_name": "chrysanths",
-                "scientific_name": "Chrysanthemum"
+                "scientific_name": "Chrysanthemum changed"
             }
         },
         "query": {
@@ -49,7 +48,8 @@ class TestVertex:
         "type": "vertex",
         "operation_type": "delete",
         "query": {
-            "scientific_name": "Chrysanthemum"
+            "label": "Plant",  # optional not needed
+            # "scientific_name": "Chrysanthemum"
         }
     }
 
