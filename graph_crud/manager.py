@@ -15,7 +15,7 @@ class CrudManager:
             raise Exception("Invalid gremlin_server_url. example: ws://127.0.0.1:8182/gremlin")
         self.g = traversal().withRemote(DriverRemoteConnection(gremlin_server_url, 'g'))
         self.vertex = Vertex(self.g)
-        self.edge = Edge(self.g)
+        # self.edge = Edge(self.g)
 
     @staticmethod
     def get_type(msg):
@@ -27,6 +27,6 @@ class CrudManager:
     def process(self, msg):
         _type = self.get_type(msg)
         if _type == "vertex":
-            self.vertex.process(msg)
+            return self.vertex.process(msg)
         elif _type == "edge":
-            self.edge.process(msg)
+            return self.edge.process(msg)

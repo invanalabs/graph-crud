@@ -1,5 +1,5 @@
-from .base import OperationsBase
-from ..exceptions import InvalidVertexException
+from graph_crud.operations.base import OperationsBase
+from graph_crud.exceptions import InvalidVertexException
 import logging
 
 logger = logging.getLogger(__name__)
@@ -7,21 +7,20 @@ logger = logging.getLogger(__name__)
 
 class Vertex(OperationsBase):
 
-    @staticmethod
-    def validate_msg(msg):
+    def validate_data(self, query_data):
         required_fields = ["type", "operation_type", "payload"]
-        msg_keys = msg.keys()
+        query_data_keys = query_data.keys()
         for required_field in required_fields:
-            if required_field not in msg_keys:
+            if required_field not in query_data_keys:
                 raise InvalidVertexException("all keys []; are required".format(
                     ",".join(required_fields)
                 ))
 
-        payload = msg.get("payload")
+        payload = query_data.get("payload")
         if payload is None or type(payload) is not dict:
             raise InvalidVertexException("Payload need to be dict, Refer documentation.")
 
-        properties = msg.get("payload", {}).get("properties")
+        properties = query_data.get("payload", {}).get("properties")
         if properties is None or type(properties) is not dict:
             raise InvalidVertexException("properties need to be dict, Refer documentation.")
 
@@ -33,17 +32,73 @@ class Vertex(OperationsBase):
                     ",".join(required_payload_fields)
                 ))
 
-    def create(self, msg):
-        logger.debug("Creating vertex with msg {msg}".format(msg=msg))
-        payload = msg.get("payload")
+    def create(self, query_data):
+        logger.debug("Creating vertex with query_data {query_data}".format(query_data=query_data))
+        payload = query_data.get("payload")
         _ = self.g.addV(payload['label'])
         for k, v in payload['properties'].items():
             _.property(k, v)
         _.next()
         return _
 
-    def process(self, msg):
-        self.validate_msg(msg)
-        operation_type = msg.get("operation_type")
-        func = getattr(self, operation_type)
-        return func(msg)
+    def update(self, query_data):
+        logger.debug("Updating vertex with query_data {query_data}".format(query_data=query_data))
+
+    def filter(self, query):
+        """
+
+        Example Usages:
+
+            msg = {
+                    "id": 12344,
+                    "label": "Plant" // optional
+                }
+
+            msg =  {
+                    "label": "Plant",
+                    "family": "Asteraceae"
+                }
+
+
+        :param query:
+        :return:
+        """
+        label = query.get("label")
+        _id = query.get("id")
+        if _id:
+            del query['id']
+            _ = self.g.V(_id)
+        else:
+            _ = self.g.V()
+
+        if label:
+            del query['label']
+            _.hasLabel(label)
+
+        for k, v in query.items():
+            _.has(k, v)
+        return _
+
+    def read_one(self, query_data):
+        logger.debug("Updating vertex with query_data {query_data}".format(query_data=query_data))
+        query = query_data.get("query", {})
+        filtered_data = self.filter(query)
+        _ = filtered_data.valueMap(True).toList()
+        if _.__len__() > 0:
+            return self._serialize_vertex_data(_[0])
+        return None
+
+    def read_many(self, query_data):
+        logger.debug("Updating vertex with query_data {query_data}".format(query_data=query_data))
+        query = query_data.get("query", {})
+        filtered_data = self.filter(query)
+        cleaned_data = []
+        for _ in filtered_data.valueMap(True).toList():
+            cleaned_data.append(self._serialize_vertex_data(_))
+        return cleaned_data
+
+    def delete(self, query_data):
+        logger.debug("Deleting the vertex with query_data {query_data}".format(query_data=query_data))
+        query = query_data.get("query", {})
+        filtered_data = self.filter(query)
+        filtered_data.drop().iterate()

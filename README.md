@@ -21,8 +21,7 @@ manager.process(msg)
     "label": "Plant",
     "properties":{
       "common_name": "chrysanths",
-      "scientific_name": "Chrysanthemum",
-      "also_called": ["chrysanths", "mums"]
+      "scientific_name": "Chrysanthemum"
     }
   }
 }
