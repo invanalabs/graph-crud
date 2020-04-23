@@ -2,6 +2,11 @@ import pytest
 
 
 class TestVertex:
+    label = "Plant"
+    example_data = {
+        "common_name": "chrysanths",
+        "scientific_name": "Chrysanthemum"
+    }
     DATA_CREATE_QUERY = {
         "type": "vertex",
         "operation_type": "create",
@@ -59,21 +64,59 @@ class TestVertex:
         return CrudManager("ws://127.0.0.1:8182/gremlin")
 
     def test_create_vertex(self, graph_manager):
-        msg = self.DATA_CREATE_QUERY
-        vtx = graph_manager.process(msg)
+        graph_manager.process(
+            type="vertex",
+            operation_type="create",
+            payload={
+                "label": "Plant",
+                "data": {
+                    "common_name": "chrysanths",
+                    "scientific_name": "Chrysanthemum"
+                }
+            })
 
     def test_updated_vertex(self, graph_manager):
-        msg = self.UPDATE_QUERY
-        vtx = graph_manager.process(msg)
+        graph_manager.process(
+            type="vertex",
+            operation_type="update",
+            payload={
+                "label": "Plant",
+                "data": {
+                    "new_field": "im new field data",
+                },
+                "query": {
+                    "scientific_name": "Chrysanthemum"
+                }
+            })
 
     def test_read_one_vertex(self, graph_manager):
-        msg = self.READ_ONE_QUERY
-        vtx = graph_manager.process(msg)
+        vtx = graph_manager.process(
+            type="vertex",
+            operation_type="read_one",
+            payload={
+                "label": "Plant",
+                "query": {
+                    "scientific_name": "Chrysanthemum"
+                }
+            }
+        )
 
     def test_read_vertex(self, graph_manager):
         msg = self.READ_MANY_QUERY
-        vtx = graph_manager.process(msg)
+        vtx = graph_manager.process(
+            type="vertex",
+            operation_type="read_many",
+            payload={
+                "label": "Plant",
+            }
+        )
 
     def test_delete_vertex(self, graph_manager):
         msg = self.DELETE_QUERY
-        graph_manager.process(msg)
+        graph_manager.process(
+            type="vertex",
+            operation_type="delete",
+            payload={
+                "label": "Plant"
+            }
+        )

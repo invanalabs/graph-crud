@@ -32,67 +32,50 @@ class Vertex(OperationsBase):
                     ",".join(required_data_fields)
                 ))
 
-    def create(self, query_data):
-        logger.debug("Creating vertex with query_data {query_data}".format(query_data=query_data))
-        data = query_data.get("data")
-        _ = self.g.addV(data['label'])
-        for k, v in data['properties'].items():
+    def create(self, label=None, data=None):
+        logger.debug("Creating vertex with label {label} and data {data}".format(label=label, data=data))
+        _ = self.g.addV(label)
+        for k, v in data.items():
             _.property(k, v)
         _vtx = _.valueMap(True).next()
         return self._serialize_vertex_data(_vtx)
 
-    def update(self, query_data):
-        logger.debug("Updating vertex with query_data {query_data}".format(query_data=query_data))
-        data = query_data.get("data")
-        vtx = self.read_one(query_data)
-        print("vtx========", vtx)
-        if vtx:
-            _ = self.g.V(vtx['id'])
-            for k, v in data['properties'].items():
+    def get_or_create(self, label=None, data=None):
+        vtx = self.read_one(label=label, data=data)
+        if vtx is None:
+            return self.create(label=label, data=data)
+        return None
+
+    def update(self, id=None, label=None, query=None, data=None):
+        logger.debug("Updating vertex with label:id:query {label}:{id}:{query}".format(
+            id=id, label=label, query=query))
+        vtx = self.read_one(id=id, label=label, query=query)
+        data = {} if data is None else data
+        if vtx is not None:
+            _ = self.g.V(id)
+            for k, v in data.items():
                 _.property(k, v)
             _vtx = _.valueMap(True).next()
             return self._serialize_vertex_data(_vtx)
         return None
 
-    def filter(self, query):
+    def filter(self, id=None, label=None, **kwargs):
         """
 
-        Example Usages:
-
-            msg = {
-                    "id": 12344,
-                    "label": "Plant" // optional
-                }
-
-            msg =  {
-                    "label": "Plant",
-                    "family": "Asteraceae"
-                }
-
-
-        :param query:
+        :param label:
+        :param id:
         :return:
         """
-        label = query.get("label")
-        _id = query.get("id")
-        if _id:
-            del query['id']
-            _ = self.g.V(_id)
-        else:
-            _ = self.g.V()
-
+        _ = self.g.V(id) if id else self.g.V()
         if label:
-            del query['label']
             _.hasLabel(label)
-
-        for k, v in query.items():
+        for k, v in kwargs.items():
             _.has(k, v)
         return _
 
-    def read_one(self, query_data):
-        logger.debug("Updating vertex with query_data {query_data}".format(query_data=query_data))
-        query = query_data.get("query", {})
-        filtered_data = self.filter(query)
+    def read_one(self, id=None, label=None, **kwargs):
+        logger.debug("Finding vertex with label {label} and kwargs {kwargs}".format(label=label, kwargs=kwargs))
+        filtered_data = self.filter(id=id, label=label, **kwargs)
         try:
             _ = filtered_data.valueMap(True).next()
             if _:
@@ -101,17 +84,15 @@ class Vertex(OperationsBase):
             pass
         return None
 
-    def read_many(self, query_data):
-        logger.debug("Updating vertex with query_data {query_data}".format(query_data=query_data))
-        query = query_data.get("query", {})
-        filtered_data = self.filter(query)
+    def read_many(self, label=None, **kwargs):
+        logger.debug("Updating vertex with label {label} and kwargs {kwargs}".format(label=label, kwargs=kwargs))
+        filtered_data = self.filter(label=label, **kwargs)
         cleaned_data = []
         for _ in filtered_data.valueMap(True).toList():
             cleaned_data.append(self._serialize_vertex_data(_))
         return cleaned_data
 
-    def delete(self, query_data):
-        logger.debug("Deleting the vertex with query_data {query_data}".format(query_data=query_data))
-        query = query_data.get("query", {})
-        filtered_data = self.filter(query)
+    def delete(self, id=None, label=None, **kwargs):
+        logger.debug("Deleting the vertex with label:id {label}:{id}".format(label=label, id=id))
+        filtered_data = self.filter(id=id, label=label, **kwargs)
         filtered_data.drop().iterate()

@@ -10,9 +10,9 @@ class OperationsBase(metaclass=abc.ABCMeta):
         self.g = g
 
     @staticmethod
-    def _serialize_vertex_data(data):
+    def _serialize_vertex_data(vtx):
         cleaned_data = {}
-        for k, v in data.items():
+        for k, v in vtx.items():
             if str(k) == "T.id":
                 if type(v) is dict:
                     cleaned_data['id'] = v.get('@value').strip("#")
@@ -24,32 +24,36 @@ class OperationsBase(metaclass=abc.ABCMeta):
                 cleaned_data[k] = v[0]
         return cleaned_data
 
+    @staticmethod
+    def _serialize_edge_data(data):
+        # TODO - implement this later
+        return {}
+
     @abc.abstractmethod
-    def create(self, data):
+    def create(self, label=None, data=None):
         pass
 
     @abc.abstractmethod
-    def update(self, data):
+    def update(self, id=None, label=None, query=None, data=None):
         pass
 
     @abc.abstractmethod
-    def read_one(self, data):
+    def read_one(self, id=None, label=None, **kwargs):
         pass
 
     @abc.abstractmethod
-    def read_many(self, data):
+    def read_many(self, label=None, **kwargs):
         pass
 
     @abc.abstractmethod
-    def delete(self, data):
+    def delete(self, id=None, label=None, **kwargs):
         pass
 
     @abc.abstractmethod
     def validate_data(self, data):
         pass
 
-    def process(self, data):
+    def process(self, operation_type=None, **kwargs):
         # self.validate_data(data)
-        operation_type = data.get("operation_type")
         func = getattr(self, operation_type)
-        return func(data)
+        return func(**kwargs)
