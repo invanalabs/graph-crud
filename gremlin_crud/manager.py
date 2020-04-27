@@ -5,15 +5,16 @@ from .operations.edge import Edge
 from .operations.vertex import Vertex
 
 
-class CrudManager:
+class GremlinCRUDManager:
     """
 
     """
 
     def __init__(self, gremlin_server_url):
+        self.connection = DriverRemoteConnection(gremlin_server_url, 'g')
         if gremlin_server_url is None:
             raise Exception("Invalid gremlin_server_url. example: ws://127.0.0.1:8182/gremlin")
-        self.g = traversal().withRemote(DriverRemoteConnection(gremlin_server_url, 'g'))
+        self.g = traversal().withRemote(self.connection)
         self.vertex = Vertex(self)
         self.edge = Edge(self)
 

@@ -1,6 +1,6 @@
 from .vertex import OperationsBase
 import logging
-from graph_crud.exceptions import InvalidVertexException
+from gremlin_crud.exceptions import InvalidVertexException
 
 logger = logging.getLogger(__name__)
 

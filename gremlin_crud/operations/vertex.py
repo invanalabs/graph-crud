@@ -1,5 +1,5 @@
-from graph_crud.operations.base import OperationsBase
-from graph_crud.exceptions import InvalidVertexException
+from gremlin_crud.operations.base import OperationsBase
+from gremlin_crud.exceptions import InvalidVertexException
 import logging
 
 logger = logging.getLogger(__name__)

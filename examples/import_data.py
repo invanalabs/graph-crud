@@ -1,7 +1,7 @@
-from graph_crud.manager import CrudManager
+from gremlin_crud.manager import GremlinCRUDManager
 import copy
 
-graph_manager = CrudManager("ws://127.0.0.1:8182/gremlin")
+graph_manager = GremlinCRUDManager("ws://127.0.0.1:8182/gremlin")
 
 nodes = [
     {

@@ -5,8 +5,8 @@ class TestVertex:
 
     @pytest.fixture
     def graph_manager(self):
-        from graph_crud.manager import CrudManager
-        return CrudManager("ws://127.0.0.1:8182/gremlin")
+        from gremlin_crud.manager import GremlinCRUDManager
+        return GremlinCRUDManager("ws://127.0.0.1:8182/gremlin")
 
     def test_create_vertex(self, graph_manager):
         graph_manager.process(

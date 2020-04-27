@@ -5,9 +5,9 @@ A light-weight python library to run CRUD operations on Graph Databases, using J
 **Note** Under Active Development. 
 
 ```python
-from graph_crud.manager import CrudManager
+from gremlin_crud.manager import GremlinCRUDManager
 
-manager = CrudManager("ws://127.0.0.1:8182/gremlin")
+manager = GremlinCRUDManager("ws://127.0.0.1:8182/gremlin")
 msg = {...}
 manager.process(msg)
 ```
