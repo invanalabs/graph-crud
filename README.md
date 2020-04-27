@@ -1,6 +1,6 @@
 # Graph CRUD 
 
-A light-weight python library to run CRUD operations on Graph Databases, using JSON inputs.
+High-level API to run CRUD operations on Graph Databases, with JSON inputs.
 
 **Note** Under Active Development. 
 
