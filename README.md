@@ -2,6 +2,8 @@
 
 High-level API to run CRUD operations on Graph Databases, with JSON inputs.
 
+**UPDATE**. This project is moved to [invanalabs/invana](https://github.com/invanalabs/invana)
+
 **Note** Under Active Development. 
 
 ```python
